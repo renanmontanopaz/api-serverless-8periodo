@@ -1,0 +1,41 @@
+service: api-serverless
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1 # Substitua pela sua região da AWS
+  memorySize: 256 # Ajuste conforme necessário
+  timeout: 30 # Ajuste conforme necessário
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:DescribeTable
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource: 'arn:aws:dynamodb:${aws:region}:*:*' # Ajuste se você usar DynamoDB
+        - Effect: Allow
+          Action:
+            - rds:DescribeDBInstances
+            - rds:DescribeDBSecurityGroups
+            - rds:DescribeDBSubnetGroups
+            - rds:DescribeEvents
+          Resource: 'arn:aws:rds:${aws:region}:*:db:*'  # Ajuste se você usar RDS
+  environment:
+    DATABASE_URL: ${env:DATABASE_URL} # Passe sua variável de ambiente para o Lambda
+functions:
+  api:
+    handler: lambda.handler
+    events:
+      - http:
+          path: /{proxy+}
+          method: any
+plugins:
+  - serverless-offline
