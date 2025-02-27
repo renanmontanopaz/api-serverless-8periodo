@@ -1,41 +1,36 @@
-service: api-serverless
-
-frameworkVersion: '3'
+service: api-serverless # Nome do seu serviço
+frameworkVersion: '4.7.0'
 
 provider:
   name: aws
-  runtime: nodejs18.x
-  region: us-east-1 # Substitua pela sua região da AWS
+  runtime: nodejs22.x # Ou a versão do Node.js que você está usando
+  region: us-east-2 # Ou a sua região da AWS
   memorySize: 256 # Ajuste conforme necessário
   timeout: 30 # Ajuste conforme necessário
   iam:
     role:
       statements:
-        - Effect: Allow
+        - Effect: Allow # Permissões para acessar o Secrets Manager (se você estiver usando para guardar suas credenciais)
           Action:
-            - dynamodb:DescribeTable
-            - dynamodb:Query
-            - dynamodb:Scan
-            - dynamodb:GetItem
-            - dynamodb:PutItem
-            - dynamodb:UpdateItem
-            - dynamodb:DeleteItem
-          Resource: 'arn:aws:dynamodb:${aws:region}:*:*' # Ajuste se você usar DynamoDB
-        - Effect: Allow
-          Action:
-            - rds:DescribeDBInstances
-            - rds:DescribeDBSecurityGroups
-            - rds:DescribeDBSubnetGroups
-            - rds:DescribeEvents
-          Resource: 'arn:aws:rds:${aws:region}:*:db:*'  # Ajuste se você usar RDS
-  environment:
-    DATABASE_URL: ${env:DATABASE_URL} # Passe sua variável de ambiente para o Lambda
-functions:
-  api:
-    handler: lambda.handler
-    events:
-      - http:
-          path: /{proxy+}
-          method: any
+            - secretsmanager:GetSecretValue
+          Resource: arn:aws:secretsmanager:us-east-2:137324640990:secret:api-serverless-database-url-73IEV1
+
+  environment: # Variáveis de ambiente para o Lambda
+    DATABASE_URL: ${sm://api-serverless-database-url:DATABASE_URL} # Sua string de conexão com o banco de dados
+    # Outras variáveis de ambiente que sua API precisa
+
+custom:
+  serverless-offline:
+    httpPort: 3000 # Porta para executar o serverless offline
+    lambdaPort: 3002 # Porta para executar o lambda offline
+    noPrependStageInUrl: true
 plugins:
   - serverless-offline
+
+functions:
+  api:
+    handler: src/lambda.handler # Caminho para o handler do Lambda
+    events:
+      - http:
+          path: /{proxy+} # Rota base da sua API (permite que todas as rotas sejam direcionadas para o Lambda)
+          method: ANY # Aceita todos os métodos HTTP
