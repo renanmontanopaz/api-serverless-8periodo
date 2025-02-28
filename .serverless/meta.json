@@ -1,0 +1,109 @@
+{
+  "C:\\Users\\Renan\\WebstormProjects\\api-serverless\\api-serverless\\serverless.yml": {
+    "versionFramework": "4.7.0",
+    "servicePath": "C:\\Users\\Renan\\WebstormProjects\\api-serverless\\api-serverless\\serverless.yml",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "api-serverless",
+      "frameworkVersion": "3",
+      "provider": {
+        "name": "aws",
+        "runtime": "nodejs22.x",
+        "region": "us-east-2",
+        "memorySize": 256,
+        "timeout": 30,
+        "iam": {
+          "role": {
+            "statements": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "secretsmanager:GetSecretValue"
+                ],
+                "Resource": "arn:aws:secretsmanager:${aws:region}:${aws:accountId}:secret:*"
+              }
+            ]
+          }
+        },
+        "environment": {
+          "DATABASE_URL": "${env:DATABASE_URL}"
+        }
+      },
+      "custom": {
+        "serverless-offline": {
+          "httpPort": 3000,
+          "lambdaPort": 3002,
+          "noPrependStageInUrl": true
+        }
+      },
+      "plugins": [
+        "serverless-offline",
+        "serverless-esbuild"
+      ],
+      "functions": {
+        "api": {
+          "handler": "src/lambda.handler",
+          "events": [
+            {
+              "http": {
+                "path": "/{proxy+}",
+                "method": "ANY"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "nodejs22.x",
+      "region": "us-east-2",
+      "memorySize": 256,
+      "timeout": 30,
+      "iam": {
+        "role": {
+          "statements": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "secretsmanager:GetSecretValue"
+              ],
+              "Resource": "arn:aws:secretsmanager:${aws:region}:${aws:accountId}:secret:*"
+            }
+          ]
+        }
+      },
+      "environment": {
+        "DATABASE_URL": "${env:DATABASE_URL}"
+      }
+    },
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "error": {
+      "message": "Cannot resolve '${env:DATABASE_URL}' variable at 'provider.environment.DATABASE_URL'. No value is available for this variable, and no default value was provided. Please check your variable definitions or provide a default value.",
+      "stack": "Error: Cannot resolve '${env:DATABASE_URL}' variable at 'provider.environment.DATABASE_URL'. No value is available for this variable, and no default value was provided. Please check your variable definitions or provide a default value.\n    at _ResolverManager.resolve (file:///C:/Users/Renan/.serverless/releases/4.7.0/package/dist/sf-core.js:1174:32615)\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async #handlePlaceholderNode (file:///C:/Users/Renan/.serverless/releases/4.7.0/package/dist/sf-core.js:1174:30822)\n    at async file:///C:/Users/Renan/.serverless/releases/4.7.0/package/dist/sf-core.js:1174:28684\n    at async processNodeAndHandleCompletion (file:///C:/Users/Renan/.serverless/releases/4.7.0/package/dist/sf-core.js:1174:17394)",
+      "code": "MISSING_VARIABLE_RESULT"
+    },
+    "serviceRawFile": "service: api-serverless # Nome do seu serviço\r\nframeworkVersion: '3'\r\n\r\nprovider:\r\n  name: aws\r\n  runtime: nodejs22.x # Ou a versão do Node.js que você está usando\r\n  region: us-east-2 # Ou a sua região da AWS\r\n  memorySize: 256 # Ajuste conforme necessário\r\n  timeout: 30 # Ajuste conforme necessário\r\n  iam:\r\n    role:\r\n      statements:\r\n        - Effect: Allow # Permissões para acessar o Secrets Manager (se você estiver usando para guardar suas credenciais)\r\n          Action:\r\n            - secretsmanager:GetSecretValue\r\n          Resource: arn:aws:secretsmanager:${aws:region}:${aws:accountId}:secret:*\r\n\r\n  environment: # Variáveis de ambiente para o Lambda\r\n    DATABASE_URL: ${env:DATABASE_URL} # Sua string de conexão com o banco de dados\r\n    # Outras variáveis de ambiente que sua API precisa\r\n\r\ncustom:\r\n  serverless-offline:\r\n    httpPort: 3000 # Porta para executar o serverless offline\r\n    lambdaPort: 3002 # Porta para executar o lambda offline\r\n    noPrependStageInUrl: true\r\nplugins:\r\n  - serverless-offline\r\n  - serverless-esbuild\r\n\r\nfunctions:\r\n  api:\r\n    handler: src/lambda.handler # Caminho para o handler do Lambda\r\n    events:\r\n      - http:\r\n          path: /{proxy+} # Rota base da sua API (permite que todas as rotas sejam direcionadas para o Lambda)\r\n          method: ANY # Aceita todos os métodos HTTP",
+    "command": [
+      "deploy"
+    ],
+    "options": {},
+    "orgId": "13a94cca-cf01-44a1-bf2a-514d59ce2b4b",
+    "orgName": "apiserverless",
+    "userId": "drNH5pxwNw9JZf5mq2",
+    "userName": "apiserverless",
+    "serviceProviderAwsCfStackId": null,
+    "serviceProviderAwsCfStackCreated": null,
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": null,
+    "serviceProviderAwsCfStackOutputs": null
+  }
+}
