@@ -3,6 +3,9 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
+    "assets": [
+      { "input": "src/", "output": ".", "include": "lambda.ts" }
+    ],
     "deleteOutDir": true
   }
 }
