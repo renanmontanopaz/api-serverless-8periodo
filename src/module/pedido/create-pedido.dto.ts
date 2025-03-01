@@ -1,26 +1,32 @@
-import { IsNotEmpty, IsEmail, IsArray, IsNumber, ValidateNested } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsEmail,
+  IsArray,
+  IsNumber,
+  ValidateNested,
+} from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateItemPedidoDto {
-    @IsNotEmpty()
-    produto: string;
+  @IsNotEmpty()
+  produto: string;
 
-    @IsNumber()
-    quantidade: number;
+  @IsNumber()
+  quantidade: number;
 
-    @IsNumber()
-    preco: number;
+  @IsNumber()
+  preco: number;
 }
 
 export class CreatePedidoDto {
-    @IsNotEmpty()
-    cliente: string;
+  @IsNotEmpty()
+  cliente: string;
 
-    @IsEmail()
-    email: string;
+  @IsEmail()
+  email: string;
 
-    @IsArray()
-    @ValidateNested({ each: true })
-    @Type(() => CreateItemPedidoDto)
-    itens: CreateItemPedidoDto[];
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateItemPedidoDto)
+  itens: CreateItemPedidoDto[];
 }

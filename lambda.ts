@@ -1,24 +1,29 @@
+import { INestApplicationContext } from '@nestjs/common';
+import { Handler } from 'aws-lambda';
 import { NestFactory } from '@nestjs/core';
+import { AppModule } from './src/app.module';
+import { AppService } from './src/app.service';
 
-import { INestApplication } from '@nestjs/common';
-import serverlessExpress from 'serverless-http';
-import { Express } from 'express';
-import { Context } from 'aws-lambda';
-import {AppModule} from "./src/app.module";
+let app: INestApplicationContext;
 
-let cachedServer: serverlessExpress.Handler;
-
-async function bootstrapServer(): Promise<serverlessExpress.Handler> {
-    if (!cachedServer) {
-        const nestApp: INestApplication = await NestFactory.create(AppModule);
-        await nestApp.init();
-        const expressApp = nestApp.getHttpAdapter().getInstance() as Express;
-        cachedServer = serverlessExpress(expressApp);
+export const handler: Handler = async (event) => {
+  try {
+    if (!app) {
+      app = await NestFactory.createApplicationContext(AppModule);
     }
-    return cachedServer;
-}
 
-export async function handler(event: any, context: Context) {
-    const server = await bootstrapServer();
-    return server(event, context);
-}
+    const appService = app.get(AppService);
+    return {
+      statusCode: 200,
+      body: JSON.stringify(appService.getHello()),
+    };
+  } catch (err) {
+    console.error(err);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: 'Internal server error',
+      }),
+    };
+  }
+};
